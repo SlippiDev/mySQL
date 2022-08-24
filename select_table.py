@@ -4,15 +4,19 @@ import tkinter as tk
 
 mydb = mql.connect(
     host = "localhost",
-    database = "mysql",
+    database = "employee",
     user = "root",
     password = "4JVkrk75Jamd"
     
 )
 print("Data connected successfuly.")
 cursor = mydb.cursor()
-sql = "create database employee"
+sql = "select * from employees"
+
 cursor.execute(sql)
+result = cursor.fetchall()
+for i in result:
+    print(i)
 mydb.close()
-print("Database created successfully.")
+print("Data shown successfully.")
 
