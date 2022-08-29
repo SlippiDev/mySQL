@@ -83,6 +83,53 @@ def searchid():
     e4.insert(0, records[0][3]) # discuss
     print(records)
     messagebox.showinfo("Information", "Records Found")
+def searchname():
+    emp_name = e2.get()
+    mydb = mql.connect(
+    host = "localhost",
+    database = "employee",
+    user = "root",
+    password = "4JVkrk75Jamd"
+    
+    )
+    print("Data connected successfuly.")
+    cursor = mydb.cursor()
+    sql = "select id, emp_name, emp_phone, emp_sal from employees where emp_name = %s"
+    val = (emp_name,)
+    cursor.execute(sql, val)
+    records = cursor.fetchall()
+    e1.insert(0, records[0][0])
+    e2.insert(0, records[0][1])
+    e3.insert(0, records[0][2])
+    e4.insert(0, records[0][3]) 
+    print(records)
+    messagebox.showinfo("Information", "Records Found")
+def update():
+    emp_id = e1.get()
+    emp_name = e2.get()
+    emp_mob = e3.get()
+    emp_sal = e4.get()
+    mydb = mql.connect(
+    host = "localhost",
+    database = "employee",
+    user = "root",
+    password = "4JVkrk75Jamd"
+    
+    )
+    print("Data connected successfuly.")
+    cursor = mydb.cursor()
+    sql = "update employees set emp_name = %s, emp_phone = %s, emp_sal = %s where id = %s"
+    val = (emp_name, emp_mob, emp_sal, emp_id)
+    cursor.execute(sql, val)
+    mydb.commit()
+    messagebox.showinfo("Information", "Data Updated...")
+    print("Data Updated Succesfully.")
+    show()
+
+
+
+
+    
 root = tk.Tk()
 root.geometry("800x500")
 l1 = tk.Label(root, text = "REGISTRATION FORM", font = ("Times", 14, "bold", "underline"))
@@ -114,5 +161,7 @@ b2 = tk.Button(root, text = "Delete", command = delete, height=1, width=15).plac
 
 b3 = tk.Button(root, text = "Search by ID", command = searchid, height=1, width=15).place(x=30, y= 290)
 
+b4 = tk.Button(root, text = "Search by Name", command = searchname, height=1, width=15).place(x=30, y=330)
 
+b5 = tk.Button(root, text = "Update", command=update, height=1, width = 15).place(x=30, y = 360)
 root.mainloop()
