@@ -1,6 +1,3 @@
-from email import message
-from pickletools import long4
-from re import L
 from tkinter import messagebox
 import mysql.connector as mql
 import tkinter as tk
