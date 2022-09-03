@@ -1,7 +1,10 @@
-from tkinter import messagebox
+from ast import And
+from gc import callbacks
+from tkinter import messagebox, END
 import mysql.connector as mql
 import tkinter as tk
 from tkinter import ttk
+
 
 def add():
     emp_id = e1.get()
@@ -41,8 +44,11 @@ def show():
     cursor.execute(sql)
     result = cursor.fetchall()
     print(result)
-    mydb.close()
+    
     print("Data shown successfully.")
+    for i, (id, emp_name, emp_mob, emp_sal) in enumerate(result, start = 1):
+        listbox.insert("", "end", values=(id, emp_name, emp_mob, emp_sal))
+        mydb.close()
 def delete():
     emp_id = e1.get()
     mydb = mql.connect(
@@ -61,6 +67,9 @@ def delete():
     messagebox.showinfo("Information", "Record Deleted Successfully...")
     show()
 def searchid():
+    e2.delete(0, END)
+    e3.delete(0, END)
+    e4.delete(0, END)
     emp_id = e1.get()
     mydb = mql.connect(
     host = "localhost",
@@ -69,6 +78,7 @@ def searchid():
     password = "4JVkrk75Jamd"
     
     )
+    
     print("Data connected successfuly.")
     cursor = mydb.cursor()
     sql = "select id, emp_name, emp_phone, emp_sal from employees where id = %s"
@@ -81,6 +91,10 @@ def searchid():
     print(records)
     messagebox.showinfo("Information", "Records Found")
 def searchname():
+    e2.delete(0, END)
+    e3.delete(0, END)
+    e4.delete(0, END)
+    
     emp_name = e2.get()
     mydb = mql.connect(
     host = "localhost",
@@ -89,6 +103,7 @@ def searchname():
     password = "4JVkrk75Jamd"
     
     )
+    
     print("Data connected successfuly.")
     cursor = mydb.cursor()
     sql = "select id, emp_name, emp_phone, emp_sal from employees where emp_name = %s"
@@ -100,6 +115,7 @@ def searchname():
     e3.insert(0, records[0][2])
     e4.insert(0, records[0][3]) 
     print(records)
+    
     messagebox.showinfo("Information", "Records Found")
 def update():
     emp_id = e1.get()
@@ -122,7 +138,11 @@ def update():
     messagebox.showinfo("Information", "Data Updated...")
     print("Data Updated Succesfully.")
     show()
-
+def clear():
+    e1.delete(0, END)
+    e2.delete(0, END)
+    e3.delete(0, END)
+    e4.delete(0, END)
 
 
 
@@ -152,13 +172,23 @@ l5 = tk.Label(root, text = "Salary").place(x = 10, y = 170)
 e4 = tk.Entry(root)
 e4.place(x = 140, y = 170)
 
-b1 = tk.Button(root, text = "Add", command = add, height=1, width=15).place(x = 30, y = 210)
+b1 = tk.Button(root, text = "Add", command = add, height=1, width=12).place(x = 30, y = 210)
 
-b2 = tk.Button(root, text = "Delete", command = delete, height=1, width=15).place(x=30, y= 250)
+b2 = tk.Button(root, text = "Delete", command = delete, height=1, width=12).place(x = 130, y= 210)
 
-b3 = tk.Button(root, text = "Search by ID", command = searchid, height=1, width=15).place(x=30, y= 290)
+b3 = tk.Button(root, text = "Search by ID", command = searchid, height=1, width=12).place(x=230, y= 210)
 
-b4 = tk.Button(root, text = "Search by Name", command = searchname, height=1, width=15).place(x=30, y=330)
+b4 = tk.Button(root, text = "Search by Name", command = searchname, height=1, width=12).place(x=330, y=210)
 
-b5 = tk.Button(root, text = "Update", command=update, height=1, width = 15).place(x=30, y = 360)
+b5 = tk.Button(root, text = "Update", command=update, height=1, width = 12).place(x=430, y = 210)
+
+b6 = tk.Button(root, text = "Clear", command = clear, height = 1, width = 12).place(x = 530, y = 210)
+column = ("emp_id", "emp_name", "emp_mob", "emp_sal")
+listbox = ttk.Treeview(root, columns=column, show = "headings")
+for call in column:
+    listbox.heading(call, text = call)
+    listbox.grid(row = 1, column = 0, columnspan=1)
+    listbox.place(x = 10, y = 250)
+
+show()
 root.mainloop()
