@@ -1,5 +1,3 @@
-from ast import And
-from gc import callbacks
 from tkinter import messagebox, END
 import mysql.connector as mql
 import tkinter as tk
@@ -46,6 +44,7 @@ def show():
     print(result)
     
     print("Data shown successfully.")
+    clear_treeview()
     for i, (id, emp_name, emp_mob, emp_sal) in enumerate(result, start = 1):
         listbox.insert("", "end", values=(id, emp_name, emp_mob, emp_sal))
         mydb.close()
@@ -91,7 +90,7 @@ def searchid():
     print(records)
     messagebox.showinfo("Information", "Records Found")
 def searchname():
-    e2.delete(0, END)
+    e1.delete(0, END)
     e3.delete(0, END)
     e4.delete(0, END)
     
@@ -111,7 +110,6 @@ def searchname():
     cursor.execute(sql, val)
     records = cursor.fetchall()
     e1.insert(0, records[0][0])
-    e2.insert(0, records[0][1])
     e3.insert(0, records[0][2])
     e4.insert(0, records[0][3]) 
     print(records)
@@ -143,10 +141,39 @@ def clear():
     e2.delete(0, END)
     e3.delete(0, END)
     e4.delete(0, END)
+def clear_treeview():
+    for i in listbox.get_children():
+        listbox.delete(i) 
+def get_value(event):
+    e1.delete(0, END)
+    e2.delete(0, END)
+    e3.delete(0, END)
+    e4.delete(0, END)
+    rowid = listbox.selection()[0]
+    select = listbox.set(rowid)
+    e1.insert(0, select["emp_id"])
+    e2.insert(0, select["emp_name"])
+    e3.insert(0, select["emp_mob"])
+    e4.insert(0, select["emp_sal"])
+def sort():
+    mydb = mql.connect(
+    host = "localhost",
+    database = "employee",
+    user = "root",
+    password = "4JVkrk75Jamd"
+    )
+
+    cursor = mydb.cursor()
+    sql = "select id, emp_name, emp_phone, emp_sal from employees order by emp_name"
+    cursor.execute(sql)
+    result = cursor.fetchall()
+    clear_treeview()
+    for i, (id, emp_name, emp_mob, emp_sal) in enumerate(result, start = 1):
+        listbox.insert("", "end", values=(id, emp_name, emp_mob, emp_sal))
+        mydb.close()
 
 
 
-    
 root = tk.Tk()
 root.geometry("800x500")
 l1 = tk.Label(root, text = "REGISTRATION FORM", font = ("Times", 14, "bold", "underline"))
@@ -183,6 +210,8 @@ b4 = tk.Button(root, text = "Search by Name", command = searchname, height=1, wi
 b5 = tk.Button(root, text = "Update", command=update, height=1, width = 12).place(x=430, y = 210)
 
 b6 = tk.Button(root, text = "Clear", command = clear, height = 1, width = 12).place(x = 530, y = 210)
+
+b7 = tk.Button(root, text = "Sort", command = sort, height = 1, width = 15).place(x = 630, y = 210)
 column = ("emp_id", "emp_name", "emp_mob", "emp_sal")
 listbox = ttk.Treeview(root, columns=column, show = "headings")
 for call in column:
@@ -191,4 +220,5 @@ for call in column:
     listbox.place(x = 10, y = 250)
 
 show()
+listbox.bind('<Double-Button-1>', get_value)
 root.mainloop()
